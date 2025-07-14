@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { name, email, password } = req.body;
 
-        if (!username || !email || !password) {
+        if (!name || !email || !password) {
             return res.status(400).json({
                 success: false,
                 message: 'Validation Error'
@@ -27,7 +27,7 @@ export const register = async (req, res) => {
         const encrypt = await bcrypt.hash(password, 10);
 
         const user = await User.create({
-            username,
+            name,
             email,
             password: encrypt
         })
@@ -39,7 +39,11 @@ export const register = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
     }
 }
 
@@ -87,7 +91,11 @@ export const Login = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
     }
 }
 
@@ -98,6 +106,36 @@ export const Logout = async (req, res) => {
             message: 'User Logout Successfully'
         })
     } catch (error) {
-        console.log(error)
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
+    }
+}
+
+export const getall = async (req, res) => {
+    try {
+        const senderId = req.id
+        const users = await User.find({ _id: { $ne: senderId } }).select('-password');
+
+        if (!users) {
+            return res.json({
+                status: 400,
+                success: false,
+                message: 'users not found'
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: users
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
     }
 }
