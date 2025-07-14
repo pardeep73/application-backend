@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 
 
 dotenv.config({
-    path: './.env'
+    path: './.env',quiet:true
 });
 
 
