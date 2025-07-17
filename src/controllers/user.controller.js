@@ -139,3 +139,30 @@ export const getall = async (req, res) => {
         });
     }
 }
+
+
+export const user = (req, res) => {
+    try {
+        const user = req.id
+
+        if (!user) {
+            return res.json({
+                status: 400,
+                success: false,
+                message: 'users not found'
+            })
+        }
+
+        return res.json({
+            status: 200,
+            success: true,
+            user: user
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error',
+        });
+    }
+}

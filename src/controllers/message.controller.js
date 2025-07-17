@@ -7,10 +7,11 @@ export const createMessage = async (req, res) => {
     const receiver = req.params.id
     const { message } = req.body;
 
+
+
     if (!message || !sender || !receiver) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-
 
     const newMessage = new Message({
       message,
@@ -111,7 +112,7 @@ export const getallusermessages = async (req, res) => {
         { sender: senderId, receiver: receiverId },
         { sender: receiverId, receiver: senderId }
       ]
-    }).sort({ createdAt: 1 }); 
+    }).sort({ createdAt: 1 });
 
 
     if (!messages) {

@@ -2,6 +2,7 @@ import express from "express";
 import { createMessage, getallusermessages, getMessagesofReceiver, getMessagesofSender } from "../controllers/message.controller.js";
 import { isAuthenticated } from "../middlewares/isAuthenticated.js";
 
+
 const messageRouter = express.Router();
 
 messageRouter.route('/create/:id').post(isAuthenticated,createMessage)
