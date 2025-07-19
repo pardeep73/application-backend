@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    profilePicture: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref:'Image'
+    }
   },
   {
     timestamps: true, // adds createdAt and updatedAt automatically

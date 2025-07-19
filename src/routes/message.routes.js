@@ -10,4 +10,5 @@ messageRouter.route('/sender').post(isAuthenticated,getMessagesofSender)
 messageRouter.route('/receiver/:id').post(isAuthenticated,getMessagesofReceiver)
 messageRouter.route('/getall/:id').post(isAuthenticated,getallusermessages)
 
+
 export default messageRouter

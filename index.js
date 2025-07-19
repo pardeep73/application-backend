@@ -60,6 +60,10 @@ io.on('connection', (socket) => {
         io.to(roomID).emit('received',message)
     })
 
+    socket.on('typing',({room,typing})=>{
+        socket.to(room).emit('typing_message',{typing})
+    })
+
 
    
     socket.on('disconnected', () => {

@@ -2,9 +2,12 @@
 import User from "../models/user.model.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { cloudinaryURL } from "../middlewares/Cloudinary.js";
+import { Image } from "../models/profileImage.model.js";
 
 export const register = async (req, res) => {
     try {
+        
         const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
@@ -24,12 +27,33 @@ export const register = async (req, res) => {
             })
         }
 
+        const imageData = await cloudinaryURL(req, req)
+
+        if (!imageData) {
+            return res.json({
+                status: 400,
+                success: false,
+                message: 'Cloudinary image Data not Received'
+            })
+        }
+
+        const profilePicture = await Image.create(imageData)
+
+        if (!profilePicture) {
+            return res.json({
+                status: 400,
+                success: false,
+                message: 'Image Upload Failed'
+            })
+        }
+
         const encrypt = await bcrypt.hash(password, 10);
 
         const user = await User.create({
             name,
             email,
-            password: encrypt
+            password: encrypt,
+            profilePicture: profilePicture._id
         })
 
         return res.status(200).json({
@@ -117,7 +141,7 @@ export const Logout = async (req, res) => {
 export const getall = async (req, res) => {
     try {
         const senderId = req.id
-        const users = await User.find({ _id: { $ne: senderId } }).select('-password');
+        const users = await User.find({ _id: { $ne: senderId } }).select('-password').populate('profilePicture');
 
         if (!users) {
             return res.json({
