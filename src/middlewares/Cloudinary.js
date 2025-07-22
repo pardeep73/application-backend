@@ -1,8 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
+import fs from 'fs/promises'
 
 dotenv.config({ path: './.env' });
-
 export const cloudinaryURL = async (req, res) => {
   try {
     cloudinary.config({
@@ -30,6 +30,15 @@ export const cloudinaryURL = async (req, res) => {
     }
 
     console.log('Cloudinary data:', upload);
+
+    if(upload){
+      try {
+        await fs.unlink(imagePath)
+        console.log('image Deleted Successfully')
+      } catch (error) {
+        throw new Error(`File Deletion Error: ${error}`)
+      }
+    }
 
     return { public_id: upload.public_id, url: upload.secure_url };
 
