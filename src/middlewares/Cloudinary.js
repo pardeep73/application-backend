@@ -18,7 +18,7 @@ export const cloudinaryURL = async (req, res) => {
       throw new Error('Image not received');
     }
 
-    const imagePath = image.path;
+    const imagePath = `/.${image.path}`;
 
     if (!imagePath) {
       throw new Error('Image path is not defined');
