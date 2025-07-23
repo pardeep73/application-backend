@@ -13,6 +13,7 @@ export const cloudinaryURL = async (req, res) => {
 
     const image = req.file;
 
+    console.log('image file',image)
     if (!image) {
       throw new Error('Image not received');
     }

@@ -27,7 +27,7 @@ export const register = async (req, res) => {
             })
         }
 
-        const imageData = await cloudinaryURL(req, req)
+        const imageData = await cloudinaryURL(req, res)
 
         if (!imageData) {
             return res.json({
