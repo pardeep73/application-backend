@@ -5,7 +5,9 @@ export const createMessage = async (req, res) => {
   try {
     const sender = req.id
     const receiver = req.params.id
-    const { message } = req.body;
+    const message = req.body.newmessage;
+
+    console.log('message',req.body)
 
 
 
