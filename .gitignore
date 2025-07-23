@@ -25,7 +25,7 @@ Thumbs.db
 dist/
 build/
 tmp/
-temp/
+
 
 # Coverage reports
 coverage/
