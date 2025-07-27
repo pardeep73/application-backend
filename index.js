@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('typing', ({ room, typing }) => {
-        socket.to(room).emit('typing_message', { typing })
+        socket.to(room).emit('typing_message',  typing )
     })
 
     socket.on('online', (userID) => {

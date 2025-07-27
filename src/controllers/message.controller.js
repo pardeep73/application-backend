@@ -7,7 +7,7 @@ export const createMessage = async (req, res) => {
     const receiver = req.params.id
     const message = req.body.newmessage;
 
-    console.log('message',req.body)
+    console.log('message', req.body)
 
 
 
@@ -125,6 +125,70 @@ export const getallusermessages = async (req, res) => {
       success: true,
       data: messages,
     });
+
+  } catch (error) {
+    console.error('Error fetching messages:', error.message);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+}
+export const lastmessage = async (req, res) => {
+  try {
+
+    const senderId = req.id;
+    const { receiverId } = req.body;
+    /* let messages = new Array(); */
+
+    const message = await Promise.all(
+      receiverId.map(async (receiver) => {
+        const listener = receiver._id;
+        const lastmessage = await Message.find({
+          $or: [
+            { sender: senderId, receiver: listener },
+            { sender: listener, receiver: senderId }
+          ]
+        }).sort({ createdAt: -1 }).limit(1);
+        return lastmessage[0]
+      })
+    )
+
+    if (!message) {
+      return res.status(400).json({ error: "messages not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: message,
+    });
+
+
+    /*  console.log(message.map(mess => { console.log(mess) })) */
+
+    /* 
+        if (!receiverId || !senderId) {
+          return res.status(400).json({ error: 'users id are not recieved' });
+        }
+    
+        
+    
+        const messages = await Message.find({
+          $or: [
+            { sender: senderId, receiver: receiverId },
+            { sender: receiverId, receiver: senderId }
+          ]
+        }).sort({ createdAt: -1 }).limit(1);
+    
+    
+        if (!messages) {
+          return res.status(400).json({ error: "messages not found" });
+        }
+    
+        res.status(200).json({
+          success: true,
+          data: messages,
+        }); */
 
   } catch (error) {
     console.error('Error fetching messages:', error.message);
