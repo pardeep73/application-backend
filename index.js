@@ -44,10 +44,16 @@ app.use('/api/message', messageRouter)
 
 let active = new Array()
 let found = false;
-let index = null;
 
 io.on('connection', (socket) => {
     console.log('a new user connected', socket.id)
+    if (io.sockets) {
+        const allSockets = Array.from(io.sockets.sockets.values());
+        allSockets.map(s => {
+            /* console.log('socket id:',s.id) */
+        })
+    }
+
 
     socket.on('join_room', async (roomID) => {
         const users = await io.in(roomID).fetchSockets()
@@ -64,31 +70,18 @@ io.on('connection', (socket) => {
     })
 
     socket.on('typing', ({ room, typing }) => {
-        socket.to(room).emit('typing_message',  typing )
+        socket.to(room).emit('typing_message', typing)
     })
 
     socket.on('online', (userID) => {
         if (userID) {
             if (active.length <= 0) {
                 active.push(userID)
-               /*  console.log('\nless than zero Condition', active, '\n') */
             } else {
-                /* console.log('\nactive user Before', active, '\n') */
                 for (let i = 0; i < active.length; i++) {
                     if ((active[i]._id === userID._id)) {
-                        /* console.log('\nId matching', active, '\n') */
                         found = true
                     }
-
-                    /* if (userID.online === false) {
-                        console.log('offline user', userID)
-                        if ((active[i]._id === userID._id)) {
-                            index = i
-                        }
-                    }
-                    if (index != null) {
-                        active[i] = active[i + 1]
-                    } */
                 }
                 if (!found && userID.online === true) {
                     active.push(userID)
@@ -99,16 +92,24 @@ io.on('connection', (socket) => {
 
             }
         }
-
-
-        /* console.log('\nactive Users array After', active, '\n') */
         io.emit('onlineUser', active)
     }
     )
 
 
-    socket.on('disconnected', () => {
-        console.log('socket is disconnected')
+    socket.on('disconnect', () => {
+        console.log('socket is disconnected', socket.id)
+        if (active && socket.id && active.length > 0) {
+            const array = active.filter((online_users) => {
+                return (
+                    String(online_users.userID) !== String(socket.id)
+                )
+            })
+            active = array
+
+            io.emit('onlineUser', active)
+        }
+
     })
 })
 
